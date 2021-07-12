@@ -1,3 +1,4 @@
+#define CGLM_ALL_UNALIGNED
 #include <stdlib.h>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -31,9 +32,13 @@ int main(int argc, char *argv[])
 			"\n"
 			"layout (location = 0) in vec3 aPos;\n"
 			"\n"
+			"uniform mat4 proj;\n"
+			"uniform mat4 view;\n"
+			"uniform mat4 model;\n"
+			"\n"
 			"void main()\n"
 			"{\n"
-			"	gl_Position = vec4(aPos, 1.0);\n"
+			"	gl_Position = proj * view * model * vec4(aPos, 1.0);\n"
 			"};\n\0";
 
 	const char *fSS =
@@ -96,9 +101,25 @@ int main(int argc, char *argv[])
 	struct IndexBuffer *ib = IndexBufferInit(sizeof(indices) / sizeof(indices[0]), indices);
 	glBindVertexArray(0);
 
+	mat4 proj;
+	glm_mat4_identity(proj);
+	glm_perspective(glm_rad(90.0f), (float)wWidth / (float)wHeight, 0.1f, 1000.0f, proj);
+	shader->SetMat4(shader, proj, "proj");
+
 	while (!glfwWindowShouldClose(window))
 	{
 		glClear(GL_COLOR_BUFFER_BIT);
+
+		mat4 view;
+		glm_mat4_identity(view);
+		glm_translate(view, (vec3){0.0f, 0.0f, -10.0f});
+		shader->SetMat4(shader, view, "view");
+
+		mat4 model;
+		glm_mat4_identity(model);
+		glm_translate(model, (vec3){0.0f, 0.0f, 0.0f});
+		glm_rotate(model, glfwGetTime() * 5.0f, (vec3){1.0f, 0.8f, 0.2f});
+		shader->SetMat4(shader, model, "model");
 
 		shader->Use(shader);
 		glBindVertexArray(va);

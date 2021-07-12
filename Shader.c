@@ -53,6 +53,7 @@ struct Shader *ShaderInit(const char *vSS, const char *fSS)
 
 	ptr->Use = pUse;
 	ptr->Disuse = pDisuse;
+	ptr->SetMat4 = pSetMat4;
 
 	ptr->ID = CreateShader(vSS, fSS);
 
@@ -67,4 +68,10 @@ void pUse(struct Shader *inst)
 void pDisuse(struct Shader *inst)
 {
 	glUseProgram(0);
+}
+
+void pSetMat4(struct Shader *inst, mat4 mat, const char *name)
+{
+	int loc = glGetUniformLocation(inst->ID, name);
+	glUniformMatrix4fv(loc, 1, GL_FALSE, &mat[0][0]);
 }
