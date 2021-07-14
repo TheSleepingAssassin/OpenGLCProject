@@ -47,31 +47,31 @@ unsigned int CreateShader(const char *vSS, const char *fSS)
 	return ID;
 }
 
-struct Shader *ShaderInit(const char *vSS, const char *fSS)
+struct Shader ShaderInit(const char *vSS, const char *fSS)
 {
-	struct Shader *ptr = (struct Shader *)malloc(sizeof(struct Shader));
+	struct Shader ptr;
 
-	ptr->Use = pUse;
-	ptr->Disuse = pDisuse;
-	ptr->SetMat4 = pSetMat4;
+	ptr.Use = pUse;
+	ptr.Disuse = pDisuse;
+	ptr.SetMat4 = pSetMat4;
 
-	ptr->ID = CreateShader(vSS, fSS);
+	ptr.ID = CreateShader(vSS, fSS);
 
 	return ptr;
 }
 
-void pUse(struct Shader *inst)
+void pUse(struct Shader inst)
 {
-	glUseProgram(inst->ID);
+	glUseProgram(inst.ID);
 }
 
-void pDisuse(struct Shader *inst)
+void pDisuse(struct Shader inst)
 {
 	glUseProgram(0);
 }
 
-void pSetMat4(struct Shader *inst, mat4 mat, const char *name)
+void pSetMat4(struct Shader inst, mat4 mat, const char *name)
 {
-	int loc = glGetUniformLocation(inst->ID, name);
+	int loc = glGetUniformLocation(inst.ID, name);
 	glUniformMatrix4fv(loc, 1, GL_FALSE, &mat[0][0]);
 }

@@ -9,6 +9,9 @@
 #include "IndexBuffer.h"
 
 int wWidth = 700, wHeight = 700;
+float deltaTime = 0.0f, lastFrame = 0.0f;
+
+void HandleDeltaTime();
 
 int main(int argc, char *argv[])
 {
@@ -51,8 +54,8 @@ int main(int argc, char *argv[])
 			"	color = vec4(1.0, 0.0, 0.0, 1.0);\n"
 			"};\n\0";
 
-	struct Shader *shader = ShaderInit(vSS, fSS);
-	shader->Use(shader);
+	struct Shader shader = ShaderInit(vSS, fSS);
+	shader.Use(shader);
 
 	// float vertices[] =
 	// 		{-0.5f, 0.5f, 0.0f,
@@ -95,33 +98,36 @@ int main(int argc, char *argv[])
 	unsigned int va;
 	glGenVertexArrays(1, &va);
 	glBindVertexArray(va);
-	struct VertexBuffer *vb = VertexBufferInit(sizeof(vertices), vertices);
+	struct VertexBuffer vb = VertexBufferInit(sizeof(vertices), vertices);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
 	glEnableVertexAttribArray(0);
-	struct IndexBuffer *ib = IndexBufferInit(sizeof(indices) / sizeof(indices[0]), indices);
+	struct IndexBuffer ib = IndexBufferInit(sizeof(indices) / sizeof(indices[0]), indices);
 	glBindVertexArray(0);
 
 	mat4 proj;
 	glm_mat4_identity(proj);
 	glm_perspective(glm_rad(90.0f), (float)wWidth / (float)wHeight, 0.1f, 1000.0f, proj);
-	shader->SetMat4(shader, proj, "proj");
+	shader.SetMat4(shader, proj, "proj");
 
 	while (!glfwWindowShouldClose(window))
 	{
-		glClear(GL_COLOR_BUFFER_BIT);
+		HandleDeltaTime();
+
+		glEnable(GL_DEPTH_TEST);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		mat4 view;
 		glm_mat4_identity(view);
 		glm_translate(view, (vec3){0.0f, 0.0f, -10.0f});
-		shader->SetMat4(shader, view, "view");
+		shader.SetMat4(shader, view, "view");
 
 		mat4 model;
 		glm_mat4_identity(model);
 		glm_translate(model, (vec3){0.0f, 0.0f, 0.0f});
 		glm_rotate(model, glfwGetTime() * 5.0f, (vec3){1.0f, 0.8f, 0.2f});
-		shader->SetMat4(shader, model, "model");
+		shader.SetMat4(shader, model, "model");
 
-		shader->Use(shader);
+		shader.Use(shader);
 		glBindVertexArray(va);
 		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 
@@ -131,4 +137,11 @@ int main(int argc, char *argv[])
 
 	glfwTerminate();
 	return 0;
+}
+
+void HandleDeltaTime()
+{
+	float currentFrame = glfwGetTime();
+	deltaTime = currentFrame - lastFrame;
+	lastFrame = currentFrame;
 }
