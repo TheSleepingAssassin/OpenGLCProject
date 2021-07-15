@@ -1,21 +1,19 @@
 #include "Vector3.h"
 
-struct Vector3 *Vector3Init(float x, float y, float z)
+struct Vector3 Vector3Init(float x, float y, float z)
 {
-	struct Vector3 *ptr = (struct Vector3 *)malloc(sizeof(struct Vector3));
+	struct Vector3 ptr;
 
-	ptr->Set = pSet;
-
-	ptr->x = x;
-	ptr->y = y;
-	ptr->z = z;
+	ptr.x = x;
+	ptr.y = y;
+	ptr.z = z;
 
 	return ptr;
 };
 
-void pSet(struct Vector3 *inst, struct Vector3 *vec)
+void VecSet(struct Vector3 inst, struct Vector3 vec)
 {
-	inst->x = vec->x;
-	inst->y = vec->y;
-	inst->z = vec->z;
+	inst.x = vec.x;
+	inst.y = vec.y;
+	inst.z = vec.z;
 }

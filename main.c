@@ -1,20 +1,26 @@
 #define CGLM_ALL_UNALIGNED
 #include <stdlib.h>
-#include <glad/glad.h>
+#include "defines.h"
 #include <GLFW/glfw3.h>
-#include <cglm/cglm.h>
 
 #include "Shader.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
+#include "Camera.h"
+#include "Vector3.h"
+#include "Vector2.h"
 
 int wWidth = 700, wHeight = 700;
 float deltaTime = 0.0f, lastFrame = 0.0f;
 
 void HandleDeltaTime();
 
+struct Camera cam;
+
 int main(int argc, char *argv[])
 {
+	cam = CameraInit(Vector3Init(0.0f, 0.0f, -10.0f));
+
 	GLFWwindow *window;
 
 	if (!glfwInit())
@@ -116,10 +122,13 @@ int main(int argc, char *argv[])
 		glEnable(GL_DEPTH_TEST);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		mat4 view;
-		glm_mat4_identity(view);
-		glm_translate(view, (vec3){0.0f, 0.0f, -10.0f});
-		shader.SetMat4(shader, view, "view");
+		// mat4 view;
+		// glm_mat4_identity(view);
+		// glm_translate(view, (vec3){0.0f, 0.0f, -10.0f});
+		// shader.SetMat4(shader, view, "view");
+		CamUView(cam);
+		CamSetPos(cam, Vector3Init(0.0f, 0.0f, 0.0f));
+		shader.SetMat4(shader, CamView, "view");
 
 		mat4 model;
 		glm_mat4_identity(model);
