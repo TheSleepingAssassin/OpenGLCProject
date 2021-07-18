@@ -9,3 +9,8 @@ float mClamp(float p, float x, float y)
 
 	return p;
 }
+
+int Rand(int lower, int upper)
+{
+	return (rand() % (upper - lower + 1)) + lower;
+}

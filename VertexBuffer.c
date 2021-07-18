@@ -1,25 +1,21 @@
 #include "VertexBuffer.h"
 
-struct VertexBuffer VertexBufferInit(unsigned int size, const void *data)
+void VertexBufferInit(struct VertexBuffer *ptr, unsigned int size, const void *data)
 {
-	struct VertexBuffer ptr;
+	ptr->Bind = VBBind;
+	ptr->Unbind = VBUnbind;
 
-	ptr.Bind = VBBind;
-	ptr.Unbind = VBUnbind;
-
-	glGenBuffers(1, &ptr.ID);
-	glBindBuffer(GL_ARRAY_BUFFER, ptr.ID);
-	glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
-
-	return ptr;
+	glGenBuffers(1, &ptr->ID);
+	glBindBuffer(GL_ARRAY_BUFFER, ptr->ID);
+	glBufferData(GL_ARRAY_BUFFER, size, data, GL_DYNAMIC_DRAW);
 }
 
-void VBBind(struct VertexBuffer inst)
+void VBBind(struct VertexBuffer *ptr)
 {
-	glBindBuffer(GL_ARRAY_BUFFER, inst.ID);
+	glBindBuffer(GL_ARRAY_BUFFER, ptr->ID);
 }
 
-void VBUnbind(struct VertexBuffer inst)
+void VBUnbind(struct VertexBuffer *ptr)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }

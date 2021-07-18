@@ -2,8 +2,6 @@
 #include "defines.h"
 #include "Vector3.h"
 
-mat4 CamView;
-
 struct Camera
 {
 	struct Vector3 pos;
@@ -13,6 +11,6 @@ struct Camera
 	mat4 view;
 };
 
-void CamSetPos(struct Camera, struct Vector3 pos);
-void CamUView(struct Camera);
-struct Camera CameraInit(struct Vector3);
+void CamSetPos(struct Camera *, struct Vector3);
+void CamUView(struct Camera *);
+void CameraInit(struct Camera *, struct Vector3);

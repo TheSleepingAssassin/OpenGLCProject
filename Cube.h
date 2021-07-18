@@ -15,4 +15,5 @@ struct Cube
 	struct IndexBuffer ib;
 };
 
-struct Cube CubeInit(struct Cube *ptr, struct Vector3, struct Vector3, struct Vector3);
+void CubeInit(struct Cube *, struct Vector3, struct Vector3, struct Vector3);
+void CubeDraw(struct Cube);

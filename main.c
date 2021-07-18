@@ -1,9 +1,9 @@
 #define CGLM_ALL_UNALIGNED
-#include <stdlib.h>
 #include "defines.h"
 #include <GLFW/glfw3.h>
-#include <stb_image.h>
+// #include <stb_image.h>
 
+#include "Functions.h"
 #include "Camera.h"
 #include "Vector3.h"
 #include "Vector2.h"
@@ -20,7 +20,7 @@ struct Camera cam;
 
 int main(int argc, char *argv[])
 {
-	cam = CameraInit(Vector3Init(0.0f, 0.0f, -10.0f));
+	CameraInit(&cam, Vector3Init(0.0f, 0.0f, -10.0f));
 
 	struct Window window = WindowCreate(Vector2Init(700, 700), "Window");
 
@@ -42,6 +42,10 @@ int main(int argc, char *argv[])
 									proj);
 	cube.shader.SetMat4(cube.shader, proj, "proj");
 
+	// struct Vector3 vec = Vector3Init(10.0f, 10.0f, 10.0f);
+
+	// printf("%f, %f, %f", vec.x, vec.y, vec.z);
+
 	while (!WindowShouldClose(window))
 	{
 		HandleDeltaTime();
@@ -49,22 +53,21 @@ int main(int argc, char *argv[])
 		glEnable(GL_DEPTH_TEST);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		CamUView(cam);
-		CamSetPos(cam, Vector3Init(0.0f, 0.0f, 0.0f));
-		cube.shader.SetMat4(cube.shader, CamView, "view");
+		CamUView(&cam);
+		CamSetPos(&cam, Vector3Init(0.0f, 0.0f, -10.0f));
+		cube.shader.SetMat4(cube.shader, cam.view, "view");
 
+		GameObjectUModel(&cube.gameObject);
 		GameObjectModelTranslate(&cube.gameObject,
-														 Vector3Init(1.0f, 1.0f, 0.0f));
+														 Vector3Init(0.0f, 0.0f, 0.0f));
 
-		GameObjectModelRotateEqual(&cube.gameObject,
-															 glfwGetTime() * 5.0f,
-															 Vector3Init(1.0f, 0.8f, 0.2f));
+		// GameObjectModelRotateEqual(&cube.gameObject,
+		//  glfwGetTime() * 5.0f,
+		//  Vector3Init(1.0f, 0.8f, 0.2f));
 
 		cube.shader.SetMat4(cube.shader, cube.gameObject.model, "model");
 
-		cube.shader.Use(cube.shader);
-		glBindVertexArray(cube.va);
-		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+		CubeDraw(cube);
 
 		glfwSwapBuffers(window.handle);
 		glfwPollEvents();

@@ -1,8 +1,8 @@
 #include "Cube.h"
 
-struct Cube CubeInit(struct Cube *ptr, struct Vector3 pos, struct Vector3 rot, struct Vector3 scale)
+void CubeInit(struct Cube *ptr, struct Vector3 pos, struct Vector3 rot, struct Vector3 scale)
 {
-	ptr->gameObject = GameObjectInit(&ptr->gameObject, pos, rot, scale);
+	GameObjectInit(&ptr->gameObject, pos, rot, scale);
 
 	const char *vSS =
 			"#version 330 core\n"
@@ -63,9 +63,16 @@ struct Cube CubeInit(struct Cube *ptr, struct Vector3 pos, struct Vector3 rot, s
 
 	glGenVertexArrays(1, &ptr->va);
 	glBindVertexArray(ptr->va);
-	ptr->vb = VertexBufferInit(sizeof(vertices), vertices);
+	VertexBufferInit(&ptr->vb, sizeof(vertices), vertices);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
 	glEnableVertexAttribArray(0);
-	ptr->ib = IndexBufferInit(sizeof(indices) / sizeof(indices[0]), indices);
+	IndexBufferInit(&ptr->ib, sizeof(indices) / sizeof(indices[0]), indices);
 	glBindVertexArray(0);
+}
+
+void CubeDraw(struct Cube ptr)
+{
+	ptr.shader.Use(ptr.shader);
+	glBindVertexArray(ptr.va);
+	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 }

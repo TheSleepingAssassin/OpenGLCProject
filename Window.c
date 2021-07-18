@@ -12,6 +12,8 @@ struct Window WindowCreate(struct Vector2 size, const char *name)
 	if (!ptr.handle)
 		exit(-1);
 
+	glfwSwapInterval(1);
+
 	glfwMakeContextCurrent(ptr.handle);
 
 	return ptr;
